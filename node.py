@@ -205,7 +205,7 @@ class Node:
     #end def createProduct(self):
 
     def printGuide(self):
-        print('type \'produc\'t and enter start to post a product')
+        print('type \'product\' and enter start to post a product')
         print('type \'products info\' and enter to get product information')
         print('type \'guide\' and enter to print this guide again')
 
