@@ -7,6 +7,8 @@ import hashlib
 import os
 import pickle
 import udp as pu 
+from datetime import timezone
+import datetime
 from product import Product
 from config import seed
 from os import path
@@ -31,7 +33,7 @@ class Node:
     #end def
 
     def save(self):
-        pickle.dump(self.product_lst, open('products', 'wb')) 
+        pickle.dump(self.product_lst, open('products', 'wb'))
     #end def
 
     def rece(self):
@@ -211,6 +213,16 @@ class Node:
 
     #end def printGuide()
 
+
+    def getUID(self):
+        dt = datetime.datetime.now(timezone.utc)
+        utc_time = dt.replace(tzinfo=timezone.utc)
+        date, prefix = str(utc_time).split('.')
+        date = date[4:].replace('-', '')
+        date = date.replace(':', '')
+        date = date.replace(' ', '')
+        uid = date + prefix[:1]
+        return uid
 
     def printProductInfo(self, lst=None):
         print('UID\tName\tPrice\tOwner\t\tDescription')
