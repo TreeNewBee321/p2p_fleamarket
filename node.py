@@ -16,6 +16,11 @@ class Node:
         self.product_lst = {}
     #end def
 
+
+    def load():
+        pass
+    #end def
+
     def rece(self):
         while 1:
             data, addr = pu.recembase(self.udp_socket)
@@ -108,8 +113,9 @@ class Node:
                 continue
 
             if msg_input == 'products info':
-                for p_lst in self.product_lst:
-                    print(p_lst)
+                print('UID\tName\tPrice\tOwner')
+                for pl_key in self.product_lst:
+                    p_lst = self.product_lst[pl_key]
                     for p in p_lst:
                         p.printInfo()
                 continue
