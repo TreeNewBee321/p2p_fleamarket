@@ -7,12 +7,14 @@ class Product:
             self.description = ''
             self.price = 0
             self.owner = ''
+            self.phone = ''
         else:
             self.uid = jf['UID']
             self.name = jf['Name']
             self.description = jf['Description']
             self.price = int(jf['Price'])
             self.owner = jf['Owner']
+            self.phone = jf['Phone']
     #end def __init__
 
 
@@ -25,7 +27,7 @@ class Product:
         #print('Price:', self.price)
         #print('Description:', self.description)
         #print('Owner:', self.owner)
-        print(f'{self.uid}\t{self.name}\t{self.price}\t{self.owner}\t{self.description}')
+        print(f'{self.uid}\t{self.name}\t{self.price}\t{self.owner}\t{self.phone}\t{self.description}')
     #end def printInfo
 
     def jsonFile(self):
@@ -33,6 +35,7 @@ class Product:
                 'Name': self.name,
                 'Price': self.price,
                 'Description': self.description,
+                'Phone': self.phone,
                 'Owner': self.owner}
 
 #end class

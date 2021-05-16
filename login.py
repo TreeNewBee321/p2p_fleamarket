@@ -7,7 +7,7 @@ from config import seed
 #   login module
 def signin():
     while 1:
-        print('Welcome to p2p flea market.If you want to create an account, enter 1.If you want to sign in, enter 2.If you want to leave, enter 3.')
+        print('Welcome to p2p flea market.\nIf you want to create an account, enter 1.\nIf you want to sign in, enter 2.\nIf you want to leave, enter 3.')
         msg_input = input()
         # create an account
         if msg_input == "1":

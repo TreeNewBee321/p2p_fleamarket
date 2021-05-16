@@ -4,10 +4,12 @@ import sys
 import json 
 import time
 import hashlib
+import os
+import pickle
 import udp as pu 
 from product import Product
 from config import seed
-
+from os import path
 
 
 class Node:
@@ -19,9 +21,17 @@ class Node:
         self.product_lst = {}
     #end def
 
+    def load(self):
+        #check file exists
+        if path.exists('products'):
+            self.product_lst = pickle.load(open('products','rb'))
+            print('debug: ', self.product_lst)
+        else:
+            print('file does not exist, no one post products')
+    #end def
 
-    def load():
-        pass
+    def save(self):
+        pickle.dump(self.product_lst, open('products', 'wb')) 
     #end def
 
     def rece(self):
@@ -30,16 +40,16 @@ class Node:
             action = json.loads(data)
             print(action["type"])
             if action['type'] == 'newpeer':
-                print("A new peer is coming")
+                #print("A new peer is coming")
                 self.peers[action['data']]= addr
-                print(addr)
+                #print(addr)
                 pu.sendJS(self.udp_socket, addr,{
                 "type":'peers',
                 "data":self.peers
                 })         
 
             if action['type'] == 'newProduct':
-                print('Someone post a new product')
+                #print('Someone post a new product')
                 newProduct = Product(action)
                 newProduct.printInfo()
                 if newProduct.name in self.product_lst:
@@ -75,32 +85,35 @@ class Node:
                          
 
     def startpeer(self):
-        print(f'{self.myid} sending a newpeer')
-        print(self.myid)
-        print(self.udp_socket)
+        #print(f'{self.myid} sending a newpeer')
+        #print(self.myid)
+        #print(self.udp_socket)
         pu.sendJS(self.udp_socket, self.seed, {
             "type":"newpeer",
             "data":self.myid
         })
-
-    
+        self.load()
 
     def send(self):
-
         while 1: 
             msg_input = input("$:")
+            msg_input = msg_input.strip()
             if msg_input == "exit":
                 pu.broadcastJS(self.udp_socket, {
                     "type":"exit",
                     "data":self.myid
                 },self.peers)
+                self.save()
                 break     
+
+
             if msg_input == "friends":
                 print(self.peers) 
                 continue      
+
             if msg_input == 'product':
-                #TODO
-                print('print product infomation here')
+                # implement create Product later
+                #newProduct = self.createProduct()
                 newProduct = Product()
                 newProduct.name = input('Your product name: ')
                 newProduct.description = input('Please descript your product status:')
@@ -113,12 +126,20 @@ class Node:
                 pu.broadcastJS(self.udp_socket, smsg, self.peers)
                 continue
 
+            if msg_input == 'save':
+                self.save()
+                continue
+
             if msg_input == 'products info':
-                print('UID\tName\tPrice\tOwner\tDescription')
-                for pl_key in self.product_lst:
-                    p_lst = self.product_lst[pl_key]
-                    for p in p_lst:
-                        p.printInfo()
+                #   print format here, todo later
+                self.printProductInfo()
+                continue
+
+            if msg_input == 'update':
+                pass
+
+            if msg_input == 'remove':
+                self.remove()
                 continue
 
 
@@ -138,4 +159,70 @@ class Node:
                 },self.peers)
                 continue 
 
+    #end def sned
+
+
+
+    def remove(self):
+        p_name = input('Please enter the product you are going to remove: ')
+        if p_name in self.product_lst:
+            show_lst = []
+            p_lst = self.product_lst[p_name]
+            uid_lst = [-1]
+            for p in p_lst:
+                if p.owner == self.myid:
+                    show_lst.append(p)
+                    uid_lst.append(p.uid)
+                #end if
+            #end for
+            if len(show_lst) == 0:
+                print('You did not post any product named', p_name)
+            else:
+                self.printProductInfo(show_lst)
+                uid = int(input('Enter the product UID to remove(-1 to cancel this action): '))
+                while uid not in uid_lst:
+                    uid = int(input('Invalid UID, please re-enter your product UID(-1 to cancel this action): '))
+                #end while
+                if uid == -1:
+                    print('You cancel this action')
+                else:
+                    for p in show_lst:
+                        if p.uid == uid:
+                            p_lst.remove(p)
+                            break
+                        #endif
+                    #end for
+                #end if
+        else:
+            print('there is no such a product named', p_name)
+        #end if
+        print('Back to main menu')
+    #end def
+
+    def createProduct(self):
+        p = Product()
+        pass
+    #end def createProduct(self):
+
+    def printGuide(self):
+        print('type \'produc\'t and enter start to post a product')
+        print('type \'products info\' and enter to get product information')
+        print('type \'guide\' and enter to print this guide again')
+
+    #end def printGuide()
+
+
+    def printProductInfo(self, lst=None):
+        print('UID\tName\tPrice\tOwner\t\tDescription')
+        if lst == None:
+            for pl_key in self.product_lst:
+                p_lst = self.product_lst[pl_key]
+                for p in p_lst:
+                    p.printInfo()
+                #end for
+            #end for
+        else: 
+            for p in lst:
+                p.printInfo()
+        #end if 
 #end class
