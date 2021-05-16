@@ -25,7 +25,7 @@ class Product:
         #print('Price:', self.price)
         #print('Description:', self.description)
         #print('Owner:', self.owner)
-        print(f'{self.uid}\t{self.name}\t{self.price}\t{self.owner}')
+        print(f'{self.uid}\t{self.name}\t{self.price}\t{self.owner}\t{self.description}')
     #end def printInfo
 
     def jsonFile(self):

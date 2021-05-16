@@ -7,6 +7,8 @@ import udp as pu
 from product import Product
 from config import seed
 
+
+
 class Node:
     def __init__(self):
         self.seed = seed
@@ -113,7 +115,7 @@ class Node:
                 continue
 
             if msg_input == 'products info':
-                print('UID\tName\tPrice\tOwner')
+                print('UID\tName\tPrice\tOwner\tDescription')
                 for pl_key in self.product_lst:
                     p_lst = self.product_lst[pl_key]
                     for p in p_lst:

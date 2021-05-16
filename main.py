@@ -14,24 +14,24 @@ def main():
     port = int(sys.argv[1]) 
     fromA = ("127.0.0.1",port)
 
-    print('creating socket and binding socket')
+    #print('creating socket and binding socket')
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_socket.bind((fromA[0],fromA[1]))
 
-    print('creating Node')
+    #print('creating Node')
     peer = Node()
     peer.myid = sys.argv[2]
     peer.udp_socket = udp_socket
 
     print(fromA, peer.myid)
 
-    print('start peer')
+    #print('start peer')
     peer.startpeer()
-    print('creating thread')
+    #print('creating thread')
     t1 = threading.Thread(target=peer.rece, args=())
     t2 = threading.Thread(target=peer.send, args=())
 
-    print('start rece and send thread')
+    #print('start rece and send thread')
     t1.start()
     t2.start()
 
