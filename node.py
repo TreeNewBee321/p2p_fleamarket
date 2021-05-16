@@ -3,6 +3,7 @@ import socket
 import sys 
 import json 
 import time
+import hashlib
 import udp as pu 
 from product import Product
 from config import seed
@@ -72,8 +73,6 @@ class Node:
                 value, key = self.peers.pop(action['data'])
                 print( action['data'] + " is left.") 
                          
-    def login(self):
-        pass
 
     def startpeer(self):
         print(f'{self.myid} sending a newpeer')
