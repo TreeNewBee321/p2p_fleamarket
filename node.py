@@ -281,30 +281,40 @@ class Node:
             total_p_num += len(self.product_lst[pl_key])
         
         print("now there are {} category and totally {} product in this community".format(category_num, total_p_num))
-        print("You can use: \n 1. Search by Category Name\n 2. Search by Product Name\n 3. Search by Owner Information\n ")
+        print("You can use: \n 1. Search by Category Name\n 2. Search by Product Name\n 3. Search by Owner Information\n 4. Show me ALL!\n 5. Quit search")
         search_method = input('Please choose a search method by method Index: ')
         if search_method == "1":
             target_name = input("Please specify a Category Name for searching: ")
-            result = search_category(target_name)
+            result = self.search_category(target_name)
         if search_method == "2":
             target_name = input("Please specify a Product Name for searching: ")
-            result = search_product(target_name)
+            result = self.search_product(target_name)
         if search_method == "3":
             print("There are three types of user info: \n 1. Search by Owner Name\n 2. Search by Owner phone number\n 3. Search by Owner email\n ")
-            target_info = input("Please specify a Owner Information type for search by type index: ")
-            if target_info == "1":
-                result = search_owner(target_info, "", "")
-            if target_info == "2":
-                result = search_owner("", target_info, "")
-            if target_info == "3":
-                result = search_owner("", "", target_info)
+            target_type = input("Please specify a Owner Information type for search by type index: ")
+            if target_type == "1":
+                target_info = input("Please specify the owner name: ")
+                result = self.search_owner(target_info, "", "")
+            if target_type == "2":
+                target_info = input("Please specify the owner phone number: ")
+                result = self.search_owner("", target_info, "")
+            if target_type == "3":
+                target_info = input("Please specify the owner email address: ")
+                result = self.search_owner("", "", target_info)
+        if search_method == "4":
+            for pl_key in self.product_lst:
+                for p in self.product_lst[pl_key] :
+                    p.printInfo()
+            result = 1
+        if search_method == "5":
+            return None
 
         if result == 0 :
             print("Sorry there is no Product specified, please try Another Search method")
         
-        act = input("If you would like to search again please entering Y, Otherwise quit search by enter N")
-        if act == "Y" :
-            search(self)
+        act = input("If you would like to search again please entering Y, Otherwise quit search by enter N: ")
+        if act == "Y" or act == "y" :
+            self.search()
 
         return None
 
@@ -426,10 +436,12 @@ class Node:
     #end def createProduct(self):
 
     def printGuide(self):
-        print('type \'product\' and enter start to post a product')
-        print('type \'products info\' and enter to get product information')
-        print('type \'remove\' and enter to remove the product that you posted')
-        print('type \'guide\' and enter to print this guide again')
+        print('type \'product\' and press enter to post a product')
+        print('type \'products info\' and press enter to get product information')
+        print('type \'remove\' and press enter to remove the product that you posted')
+        print('type \'search\' and press enter to start a search for a product')
+        print('type \'exit\' and press enter to stop this program at any time you want to leave')
+        print('type \'guide\' and press enter to print this guide again')
 
     #end def printGuide()
 
