@@ -69,12 +69,12 @@ class Node:
                     for p in p_lst:
                         if p.uid == uid:
                             p_lst.remove(p)
-                            print('debug: remove signal, ack')
+                            #print('debug: remove signal, ack')
                             break
                         #end if
                     #end for
                 else:
-                    print('debug: there is no such a product')
+                    #print('debug: there is no such a product')
                 #end if
             #end if action
 
@@ -89,12 +89,12 @@ class Node:
                     for p in p_lst:
                         if p.uid == uid:
                             p.setAttr(attr,value)
-                            print('debug: update signal, ack')
+                            #print('debug: update signal, ack')
                             break
                         #end if
                     #end for
                 else:
-                    print('debug: there is no such a product')
+                    #print('debug: there is no such a product')
                 #end if 
             #end if action
 
@@ -184,7 +184,7 @@ class Node:
             if msg_input == 'update':
                 p, attr, value = self.update()
                 if p != None:
-                    print('debug: send a update command to peers')
+                    #print('debug: send a update command to peers')
                     pu.broadcastJS(self.udp_socket, {
                         "type": "update",
                         "Name": p.name,
@@ -192,24 +192,28 @@ class Node:
                         "Attribute": attr,
                         "Value": value}, self.peers)
                 else:
-                    print('debug: update canceled, nothing happend')
+                    #print('debug: update canceled, nothing happend')
                 #end if
                 continue
 
             if msg_input == 'remove':
                 p = self.remove()
                 if p != None:
-                    print('debug: send a remove command to peers')
+                    #print('debug: send a remove command to peers')
                     pu.broadcastJS(self.udp_socket, {
                             "type": "remove",
                             "Name": p.name,
                             "UID": p.uid}, self.peers)
                 else:
-                    print('debug: Remove canceled, nothing happened')
+                    #print('debug: Remove canceled, nothing happened')
                 continue
 
             if msg_input == 'search':
                 self.search()
+                continue
+
+            if msg_input == 'guide':
+                self.printGuide()
                 continue
 
 
@@ -439,9 +443,10 @@ class Node:
         print('type \'product\' and press enter to post a product')
         print('type \'products info\' and press enter to get product information')
         print('type \'remove\' and press enter to remove the product that you posted')
+        print('type \'update\' and press enter to update a product that you posted')
         print('type \'search\' and press enter to start a search for a product')
-        print('type \'exit\' and press enter to stop this program at any time you want to leave')
         print('type \'guide\' and press enter to print this guide again')
+        print('type \'exit\' and press enter to stop this program at any time you want to leave')
 
     #end def printGuide()
 
