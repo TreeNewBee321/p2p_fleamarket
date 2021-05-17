@@ -40,7 +40,7 @@ class Node:
         while 1:
             data, addr = pu.recembase(self.udp_socket)
             action = json.loads(data)
-            print(action["type"])
+            #print(action["type"])
             if action['type'] == 'newpeer':
                 #print("A new peer is coming")
                 self.peers[action['data']]= addr
@@ -103,7 +103,7 @@ class Node:
             
 
             if action['type'] == 'peers':
-                print("Received a bunch of peers")
+                #print("Received a bunch of peers")
                 self.peers.update(action['data'])
                 # introduce youself. 
                 pu.broadcastJS(self.udp_socket, {
@@ -112,7 +112,8 @@ class Node:
                 },self.peers) 
 
             if action['type'] == 'introduce':
-                print("Get a new friend.")
+                #   TODO
+                #print("Someone join the group.")
                 self.peers[action['data']]= addr   
 
             if action['type'] == 'input':
