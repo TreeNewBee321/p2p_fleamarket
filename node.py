@@ -275,6 +275,7 @@ class Node:
     def search(self):
         category_num = 0
         total_p_num = 0
+        result = 0
         for pl_key in self.product_lst:
             category_num += 1
             total_p_num += len(self.product_lst[pl_key])
@@ -284,25 +285,95 @@ class Node:
         search_method = input('Please choose a search method by method Index: ')
         if search_method == "1":
             target_name = input("Please specify a Category Name for searching: ")
-            search_category(target_name)
+            result = search_category(target_name)
         if search_method == "2":
             target_name = input("Please specify a Product Name for searching: ")
-            search_product(target_name)
+            result = search_product(target_name)
         if search_method == "3":
             print("There are three types of user info: \n 1. Search by Owner Name\n 2. Search by Owner phone number\n 3. Search by Owner email\n ")
             target_info = input("Please specify a Owner Information type for search by type index: ")
             if target_info == "1":
-                search_product(target_info, "", "")
+                result = search_owner(target_info, "", "")
             if target_info == "2":
-                search_product("", target_info, "")
+                result = search_owner("", target_info, "")
             if target_info == "3":
-                search_product("", "", target_info)
+                result = search_owner("", "", target_info)
 
+        if result == 0 :
+            print("Sorry there is no Product specified, please try Another Search method")
+        
+        act = input("If you would like to search again please entering Y, Otherwise quit search by enter N")
+        if act == "Y" :
+            search(self)
 
-    def search_category(target_name) :
+        return None
+
+    def search_category(self, target_name) :
         for pl_key in self.product_lst:
             if (target_name == pl_key) :
-                print("")
+                print("Found the Category: {}".format(target_name))
+                print("Here are the products under this category: ")
+                for prod in self.product_lst[pl_key] :
+                    prod.printInfo()
+                return 1
+        return 0
+
+    def search_product(self, target_name) :
+        pp_lst = []
+        for pl_key in self.product_lst:
+            p_lst = self.product_lst[pl_key]
+            for p in p_lst :
+                if p.name == target_name:
+                    pp_lst.append(p)
+            if len(pp_lst)>0 :
+                print("Found the Product with name: {}".format(target_name))
+                print("Here are the products : ")
+                for pp in pp_lst :
+                    pp.printInfo()
+                return 1
+        return 0
+
+    def search_owner(self, owner_name="", owner_phone="", owner_email="") :
+        if len(owner_name)>0 :
+            pp_lst = []
+            for pl_key in self.product_lst:
+                p_lst = self.product_lst[pl_key]
+                for p in p_lst :
+                    if p.owner == owner_name:
+                        pp_lst.append(p)
+                if len(pp_lst)>0 :
+                    print("Found the Product with owner name: {}".format(owner_name))
+                    print("Here are the products : ")
+                    for pp in pp_lst :
+                        pp.printInfo()
+                    return 1
+        if len(owner_phone)>0 :
+            pp_lst = []
+            for pl_key in self.product_lst:
+                p_lst = self.product_lst[pl_key]
+                for p in p_lst :
+                    if p.phone == owner_phone:
+                        pp_lst.append(p)
+                if len(pp_lst)>0 :
+                    print("Found the Product with owner phone number: {}".format(owner_phone))
+                    print("Here are the products : ")
+                    for pp in pp_lst :
+                        pp.printInfo()
+                    return 1
+        if len(owner_email)>0 :
+            pp_lst = []
+            for pl_key in self.product_lst:
+                p_lst = self.product_lst[pl_key]
+                for p in p_lst :
+                    if p.email == owner_email:
+                        pp_lst.append(p)
+                if len(pp_lst)>0 :
+                    print("Found the Product with owner email address: {}".format(owner_email))
+                    print("Here are the products : ")
+                    for pp in pp_lst :
+                        pp.printInfo()
+                    return 1
+        return 0
 
     def update(self):
         p_name = input('Please enter the product you are going to update: ')
