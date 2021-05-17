@@ -27,7 +27,7 @@ class Node:
         #check file exists
         if path.exists('products'):
             self.product_lst = pickle.load(open('products','rb'))
-            print('debug: ', self.product_lst)
+            #print('debug: ', self.product_lst)
         else:
             print('file does not exist, no one post products')
     #end def
@@ -58,6 +58,23 @@ class Node:
                     self.product_lst[newProduct.name].append(newProduct)
                 else:
                     self.product_lst[newProduct.name] =  [newProduct]
+                #end if
+
+            if action['type'] == 'remove':
+                name = action['Name']
+                uid = action['UID']
+                # Assume the product in list
+                if name in self.product_lst:
+                    p_lst = self.product_lst[name]
+                    for p in p_lst:
+                        if p.uid == uid:
+                            p_lst.remove(p)
+                            break
+                        #end if
+                    #end for
+                    print('debug: receive remove signal, remove successfully')
+                else:
+                    print('debug: there is no such a product')
                 #end if
 
             if action['type'] == 'peers':
@@ -121,6 +138,7 @@ class Node:
                 newProduct.description = input('Please descript your product status:')
                 newProduct.price = input('what is the price of the product:')
                 newProduct.owner = self.myid
+                newProduct.uid = self.getUID()
                 newProduct.printInfo()
                 smsg = newProduct.jsonFile()
                 smsg.update({'type': 'newProduct'})
@@ -141,7 +159,15 @@ class Node:
                 pass
 
             if msg_input == 'remove':
-                self.remove()
+                p = self.remove()
+                if p != None:
+                    print('debug: send a success command to peers')
+                    pu.broadcastJS(self.udp_socket, {
+                            "type": "remove",
+                            "Name": p.name,
+                            "UID": p.uid}, self.peers)
+                else:
+                    print('debug: Remove canceled, nothing happened')
                 continue
 
             if msg_input == 'search':
@@ -174,7 +200,7 @@ class Node:
         if p_name in self.product_lst:
             show_lst = []
             p_lst = self.product_lst[p_name]
-            uid_lst = [-1]
+            uid_lst = ['-1']
             for p in p_lst:
                 if p.owner == self.myid:
                     show_lst.append(p)
@@ -185,16 +211,18 @@ class Node:
                 print('You did not post any product named', p_name)
             else:
                 self.printProductInfo(show_lst)
-                uid = int(input('Enter the product UID to remove(-1 to cancel this action): '))
+                uid = input('Enter the product UID to remove(-1 to cancel this action): ')
                 while uid not in uid_lst:
-                    uid = int(input('Invalid UID, please re-enter your product UID(-1 to cancel this action): '))
+                    uid = input('Invalid UID, please re-enter your product UID(-1 to cancel this action): ')
                 #end while
-                if uid == -1:
+                if uid == '-1':
                     print('You cancel this action')
                 else:
                     for p in show_lst:
                         if p.uid == uid:
                             p_lst.remove(p)
+                            print('Remove successfully')
+                            return p
                             break
                         #endif
                     #end for
@@ -203,6 +231,7 @@ class Node:
             print('there is no such a product named', p_name)
         #end if
         print('Back to main menu')
+        return None
     #end def
 
     def search(self):
@@ -218,6 +247,14 @@ class Node:
             show_lst = []
             p_lst = self.product_lst[p_name]
             uid_lst = [-1]
+
+    def update(self):
+        p_name = input('Please enter the product you are going to update: ')
+        if p_name in self.product_lst:
+            show_lst = []
+            p_lst = self.product_lst[p_name]
+            uid_lst = ['-1']
+
             for p in p_lst:
                 if p.owner == self.myid:
                     show_lst.append(p)
@@ -228,16 +265,26 @@ class Node:
                 print('You did not post any product named', p_name)
             else:
                 self.printProductInfo(show_lst)
-                uid = int(input('Enter the product UID to remove(-1 to cancel this action): '))
+                uid = input('Enter the product UID to update(-1 to cancel this action): ')
                 while uid not in uid_lst:
-                    uid = int(input('Invalid UID, please re-enter your product UID(-1 to cancel this action): '))
+                    uid = input('Invalid UID, please re-enter your product UID(-1 to cancel this action): ')
                 #end while
-                if uid == -1:
+                if uid == '-1':
                     print('You cancel this action')
                 else:
                     for p in show_lst:
                         if p.uid == uid:
-                            p_lst.remove(p)
+                            attr_lst = ['name', 'phone', 'description', 'price', 'email']
+                            attr = input('what infomation are you going to update? ')
+                            while attr not in attr_lst:
+                                attr = input('Invalid input, re-enter your input please(name, description, price, phone, email): ')
+                            #end while
+                            if attr == 'price':
+                                price = input('enter your new price: ')
+                                p.price = int(price)
+                            else:
+                                value = input(f'enter your new {attr}:')
+                                p.setAttr(attr, value)
                             break
                         #endif
                     #end for
@@ -246,7 +293,8 @@ class Node:
             print('there is no such a product named', p_name)
         #end if
         print('Back to main menu')
-    #end def
+
+
 
     def createProduct(self):
         p = Product()
@@ -256,6 +304,7 @@ class Node:
     def printGuide(self):
         print('type \'product\' and enter start to post a product')
         print('type \'products info\' and enter to get product information')
+        print('type \'remove\' and enter to remove the product that you posted')
         print('type \'guide\' and enter to print this guide again')
 
     #end def printGuide()
