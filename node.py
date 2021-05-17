@@ -308,9 +308,10 @@ class Node:
                 target_info = input("Please specify the owner email address: ")
                 result = self.search_owner("", "", target_info)
         if search_method == "3":
-            for pl_key in self.product_lst:
-                for p in self.product_lst[pl_key] :
-                    p.printInfo()
+            self.printProductInfo()
+            # for pl_key in self.product_lst:
+            #     for p in self.product_lst[pl_key] :
+            #         p.printInfo()
             result = 1
         if search_method == "4":
             return None
@@ -334,8 +335,9 @@ class Node:
             if len(pp_lst)>0 :
                 print("Found the Product with name: {}".format(target_name))
                 print("Here are the products : ")
-                for pp in pp_lst :
-                    pp.printInfo()
+                self.printProductInfo(pp_lst)
+                # for pp in pp_lst :
+                #     pp.printInfo()
                 return 1
         return 0
 
@@ -350,8 +352,9 @@ class Node:
                 if len(pp_lst)>0 :
                     print("Found the Product with owner name: {}".format(owner_name))
                     print("Here are the products : ")
-                    for pp in pp_lst :
-                        pp.printInfo()
+                    self.printProductInfo(pp_lst)
+                    # for pp in pp_lst :
+                    #     pp.printInfo()
                     return 1
         if len(owner_phone)>0 :
             pp_lst = []
@@ -363,8 +366,9 @@ class Node:
                 if len(pp_lst)>0 :
                     print("Found the Product with owner phone number: {}".format(owner_phone))
                     print("Here are the products : ")
-                    for pp in pp_lst :
-                        pp.printInfo()
+                    self.printProductInfo(pp_lst)
+                    # for pp in pp_lst :
+                    #     pp.printInfo()
                     return 1
         if len(owner_email)>0 :
             pp_lst = []
@@ -376,8 +380,9 @@ class Node:
                 if len(pp_lst)>0 :
                     print("Found the Product with owner email address: {}".format(owner_email))
                     print("Here are the products : ")
-                    for pp in pp_lst :
-                        pp.printInfo()
+                    self.printProductInfo(pp_lst)
+                    # for pp in pp_lst :
+                    #     pp.printInfo()
                     return 1
         return 0
 
