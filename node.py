@@ -242,11 +242,29 @@ class Node:
             total_p_num += len(self.product_lst[pl_key])
         
         print("now there are {} category and totally {} product in this community".format(category_num, total_p_num))
-        p_name = input('Please choose a search method: ')
-        if p_name in self.product_lst:
-            show_lst = []
-            p_lst = self.product_lst[p_name]
-            uid_lst = [-1]
+        print("You can use: \n 1. Search by Category Name\n 2. Search by Product Name\n 3. Search by Owner Information\n ")
+        search_method = input('Please choose a search method by method Index: ')
+        if search_method == "1":
+            target_name = input("Please specify a Category Name for searching: ")
+            search_category(target_name)
+        if search_method == "2":
+            target_name = input("Please specify a Product Name for searching: ")
+            search_product(target_name)
+        if search_method == "3":
+            print("There are three types of user info: \n 1. Search by Owner Name\n 2. Search by Owner phone number\n 3. Search by Owner email\n ")
+            target_info = input("Please specify a Owner Information type for search by type index: ")
+            if target_info == "1":
+                search_product(target_info, "", "")
+            if target_info == "2":
+                search_product("", target_info, "")
+            if target_info == "3":
+                search_product("", "", target_info)
+
+
+    def search_category(target_name) :
+        for pl_key in self.product_lst:
+            if (target_name == pl_key) :
+                print("")
 
     def update(self):
         p_name = input('Please enter the product you are going to update: ')
