@@ -74,6 +74,7 @@ class Node:
                         #end if
                     #end for
                 else:
+                    pass
                     #print('debug: there is no such a product')
                 #end if
             #end if action
@@ -94,6 +95,7 @@ class Node:
                         #end if
                     #end for
                 else:
+                    pass
                     #print('debug: there is no such a product')
                 #end if 
             #end if action
@@ -192,6 +194,7 @@ class Node:
                         "Attribute": attr,
                         "Value": value}, self.peers)
                 else:
+                    pass
                     #print('debug: update canceled, nothing happend')
                 #end if
                 continue
@@ -205,6 +208,7 @@ class Node:
                             "Name": p.name,
                             "UID": p.uid}, self.peers)
                 else:
+                    pass
                     #print('debug: Remove canceled, nothing happened')
                 continue
 
@@ -285,15 +289,12 @@ class Node:
             total_p_num += len(self.product_lst[pl_key])
         
         print("now there are {} category and totally {} product in this community".format(category_num, total_p_num))
-        print("You can use: \n 1. Search by Category Name\n 2. Search by Product Name\n 3. Search by Owner Information\n 4. Show me ALL!\n 5. Quit search")
+        print("You can use: \n 1. Search by Product Name\n 2. Search by Owner Information\n 3. Show me ALL!\n 4. Quit search")
         search_method = input('Please choose a search method by method Index: ')
         if search_method == "1":
-            target_name = input("Please specify a Category Name for searching: ")
-            result = self.search_category(target_name)
-        if search_method == "2":
             target_name = input("Please specify a Product Name for searching: ")
             result = self.search_product(target_name)
-        if search_method == "3":
+        if search_method == "2":
             print("There are three types of user info: \n 1. Search by Owner Name\n 2. Search by Owner phone number\n 3. Search by Owner email\n ")
             target_type = input("Please specify a Owner Information type for search by type index: ")
             if target_type == "1":
@@ -305,12 +306,12 @@ class Node:
             if target_type == "3":
                 target_info = input("Please specify the owner email address: ")
                 result = self.search_owner("", "", target_info)
-        if search_method == "4":
+        if search_method == "3":
             for pl_key in self.product_lst:
                 for p in self.product_lst[pl_key] :
                     p.printInfo()
             result = 1
-        if search_method == "5":
+        if search_method == "4":
             return None
 
         if result == 0 :
@@ -321,16 +322,6 @@ class Node:
             self.search()
 
         return None
-
-    def search_category(self, target_name) :
-        for pl_key in self.product_lst:
-            if (target_name == pl_key) :
-                print("Found the Category: {}".format(target_name))
-                print("Here are the products under this category: ")
-                for prod in self.product_lst[pl_key] :
-                    prod.printInfo()
-                return 1
-        return 0
 
     def search_product(self, target_name) :
         pp_lst = []
