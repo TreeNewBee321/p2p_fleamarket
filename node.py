@@ -438,7 +438,6 @@ class Node:
 
     def printGuide(self):
         print('type \'product\' and press enter to post a product')
-        print('type \'products info\' and press enter to get product information')
         print('type \'remove\' and press enter to remove the product that you posted')
         print('type \'update\' and press enter to update a product that you posted')
         print('type \'search\' and press enter to start a search for a product')
