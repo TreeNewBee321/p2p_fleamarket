@@ -69,13 +69,36 @@ class Node:
                     for p in p_lst:
                         if p.uid == uid:
                             p_lst.remove(p)
+                            print('debug: remove signal, ack')
                             break
                         #end if
                     #end for
-                    print('debug: receive remove signal, remove successfully')
                 else:
                     print('debug: there is no such a product')
                 #end if
+            #end if action
+
+            if action['type'] == 'update': 
+                name = action['Name']
+                uid = action['UID']
+                attr = action['Attribute']
+                value = action['Value']
+                # Assume the product in list
+                if name in self.product_lst:
+                    p_lst = self.product_lst[name]
+                    for p in p_lst:
+                        if p.uid == uid:
+                            p.setAttr(attr,value)
+                            print('debug: update signal, ack')
+                            break
+                        #end if
+                    #end for
+                else:
+                    print('debug: there is no such a product')
+                #end if 
+            #end if action
+
+            
 
             if action['type'] == 'peers':
                 print("Received a bunch of peers")
@@ -101,6 +124,9 @@ class Node:
                     # self.udp_socket.close()
                 value, key = self.peers.pop(action['data'])
                 print( action['data'] + " is left.") 
+            #end if
+        #end while
+    #end def
                          
 
     def startpeer(self):
@@ -156,12 +182,24 @@ class Node:
                 continue
 
             if msg_input == 'update':
-                pass
+                p, attr, value = self.update()
+                if p != None:
+                    print('debug: send a update command to peers')
+                    pu.broadcastJS(self.udp_socket, {
+                        "type": "update",
+                        "Name": p.name,
+                        "UID": p.uid,
+                        "Attribute": attr,
+                        "Value": value}, self.peers)
+                else:
+                    print('debug: update canceled, nothing happend')
+                #end if
+                continue
 
             if msg_input == 'remove':
                 p = self.remove()
                 if p != None:
-                    print('debug: send a success command to peers')
+                    print('debug: send a remove command to peers')
                     pu.broadcastJS(self.udp_socket, {
                             "type": "remove",
                             "Name": p.name,
@@ -297,13 +335,9 @@ class Node:
                             while attr not in attr_lst:
                                 attr = input('Invalid input, re-enter your input please(name, description, price, phone, email): ')
                             #end while
-                            if attr == 'price':
-                                price = input('enter your new price: ')
-                                p.price = int(price)
-                            else:
-                                value = input(f'enter your new {attr}:')
-                                p.setAttr(attr, value)
-                            break
+                            value = input(f'enter your new {attr}:')
+                            p.setAttr(attr, value)
+                            return p, attr, value
                         #endif
                     #end for
                 #end if
@@ -312,7 +346,8 @@ class Node:
         #end if
         print('Back to main menu')
 
-
+        return None, '', ''
+    #end def update
 
     def createProduct(self):
         p = Product()

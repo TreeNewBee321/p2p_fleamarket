@@ -49,6 +49,8 @@ class Product:
             self.description = value
         elif attr == 'phone':
             self.phone = value
+        elif attr == 'price':
+            self.price = int(value)
         else:
             self.email = value
     #end def setAttr
