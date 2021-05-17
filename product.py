@@ -16,7 +16,7 @@ class Product:
             self.price = int(jf['Price'])
             self.owner = jf['Owner']
             self.phone = jf['Phone']
-            self.phone = jf['Email']
+            self.email = jf['Email']
     #end def __init__
 
 
@@ -40,5 +40,16 @@ class Product:
                 'Phone': self.phone,
                 'Email': self.email,
                 'Owner': self.owner}
+    #end def
 
+    def setAttr(self, attr, value):
+        if attr == 'name':
+            self.name = value
+        elif attr == 'description':
+            self.description = value
+        elif attr == 'phone':
+            self.phone = value
+        else:
+            self.email = value
+    #end def setAttr
 #end class
