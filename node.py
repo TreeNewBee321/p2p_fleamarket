@@ -156,6 +156,7 @@ class Node:
                 continue
 
             if msg_input == 'update':
+                self.update()
                 pass
 
             if msg_input == 'remove':
@@ -260,12 +261,8 @@ class Node:
                             while attr not in attr_lst:
                                 attr = input('Invalid input, re-enter your input please(name, description, price, phone, email): ')
                             #end while
-                            if attr == 'price':
-                                price = input('enter your new price: ')
-                                p.price = int(price)
-                            else:
-                                value = input(f'enter your new {attr}:')
-                                p.setAttr(attr, value)
+                            value = input(f'enter your new {attr}:')
+                            p.setAttr(attr, value)
                             break
                         #endif
                     #end for
