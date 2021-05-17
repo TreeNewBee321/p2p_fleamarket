@@ -144,6 +144,10 @@ class Node:
                 self.remove()
                 continue
 
+            if msg_input == 'search':
+                self.search()
+                continue
+
 
             l = msg_input.split()
             
@@ -167,6 +171,49 @@ class Node:
 
     def remove(self):
         p_name = input('Please enter the product you are going to remove: ')
+        if p_name in self.product_lst:
+            show_lst = []
+            p_lst = self.product_lst[p_name]
+            uid_lst = [-1]
+            for p in p_lst:
+                if p.owner == self.myid:
+                    show_lst.append(p)
+                    uid_lst.append(p.uid)
+                #end if
+            #end for
+            if len(show_lst) == 0:
+                print('You did not post any product named', p_name)
+            else:
+                self.printProductInfo(show_lst)
+                uid = int(input('Enter the product UID to remove(-1 to cancel this action): '))
+                while uid not in uid_lst:
+                    uid = int(input('Invalid UID, please re-enter your product UID(-1 to cancel this action): '))
+                #end while
+                if uid == -1:
+                    print('You cancel this action')
+                else:
+                    for p in show_lst:
+                        if p.uid == uid:
+                            p_lst.remove(p)
+                            break
+                        #endif
+                    #end for
+                #end if
+        else:
+            print('there is no such a product named', p_name)
+        #end if
+        print('Back to main menu')
+    #end def
+
+    def search(self):
+        category_num = 0
+        total_p_num = 0
+        for pl_key in self.product_lst:
+            category_num += 1
+            total_p_num += len(self.product_lst[pl_key])
+        
+        print("now there are {} category and totally {} product in this community".format(category_num, total_p_num))
+        p_name = input('Please choose a search method: ')
         if p_name in self.product_lst:
             show_lst = []
             p_lst = self.product_lst[p_name]
