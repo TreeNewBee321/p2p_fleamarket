@@ -171,7 +171,7 @@ class Node:
                 newProduct.printInfo()
                 smsg = newProduct.jsonFile()
                 smsg.update({'type': 'newProduct'})
-                print(smsg)
+                print('Product added')
                 pu.broadcastJS(self.udp_socket, smsg, self.peers)
                 continue
 
@@ -387,7 +387,7 @@ class Node:
         return 0
 
     def update(self):
-        p_name = input('Please enter the product you are going to update: ')
+        p_name = input('Please enter the product name you are going to update: ')
         if p_name in self.product_lst:
             show_lst = []
             p_lst = self.product_lst[p_name]
@@ -413,7 +413,7 @@ class Node:
                     for p in show_lst:
                         if p.uid == uid:
                             attr_lst = ['name', 'phone', 'description', 'price', 'email']
-                            attr = input('what infomation are you going to update? ')
+                            attr = input('what infomation are you going to update(name, description, price, phone, email)? ')
                             while attr not in attr_lst:
                                 attr = input('Invalid input, re-enter your input please(name, description, price, phone, email): ')
                             #end while
