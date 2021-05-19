@@ -269,6 +269,17 @@ class Node:
                         "UID": p.uid,
                         "Attribute": attr,
                         "Value": value}, self.peers)
+                    
+                    if attr == 'name':
+                        p_lst = self.product_lst[p.name]
+                        p_lst.remove(p)
+                        if value in self.product_lst:
+                            self.product_lst[value].append(p)
+                        else:
+                            self.product_lst[value] = [p]
+                        #end if
+                    #end if
+                    p.setAttr(attr, value)
                     self.version+=1
                 else:
                     pass
@@ -499,7 +510,6 @@ class Node:
                                 attr = input('Invalid input, re-enter your input please(name, price, phone, email, description): ')
                             #end while
                             value = input(f'enter your new {attr}:')
-                            p.setAttr(attr, value)
                             return p, attr, value
                         #endif
                     #end for

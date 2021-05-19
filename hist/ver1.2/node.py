@@ -60,7 +60,7 @@ class Node:
                 else:
                     self.product_lst[newProduct.name] =  [newProduct]
                 #end if
-                print('debug: sync value is:', action['sync'])
+                #print('debug: sync value is:', action['sync'])
                 if not action['sync']:
                     self.version+=1
             #end rec newProduct
@@ -76,7 +76,7 @@ class Node:
                     for p in p_lst:
                         if p.uid == uid:
                             p_lst.remove(p)
-                            print('debug: remove signal, ack')
+                            #print('debug: remove signal, ack')
                             break
                         #end if
                     #end for
@@ -131,7 +131,7 @@ class Node:
             #end rec peers
 
             if action['type'] == 'sync':
-                print('debug: in sync')
+                #print('debug: in sync')
                 pversion = action['version']
                 if pversion > self.version:
                     pu.sendJS(self.udp_socket, addr, {
@@ -269,6 +269,17 @@ class Node:
                         "UID": p.uid,
                         "Attribute": attr,
                         "Value": value}, self.peers)
+                    
+                    if attr == 'name':
+                        p_lst = self.product_lst[p.name]
+                        p_lst.remove(p)
+                        if value in self.product_lst:
+                            self.product_lst[value].append(p)
+                        else:
+                            self.product_lst[value] = [p]
+                        #end if
+                    #end if
+                    p.setAttr(attr, value)
                     self.version+=1
                 else:
                     pass
@@ -499,7 +510,6 @@ class Node:
                                 attr = input('Invalid input, re-enter your input please(name, price, phone, email, description): ')
                             #end while
                             value = input(f'enter your new {attr}:')
-                            p.setAttr(attr, value)
                             return p, attr, value
                         #endif
                     #end for
