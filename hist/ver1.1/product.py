@@ -6,7 +6,7 @@ class Product:
             self.uid = None
             self.name = ''
             self.description = ''
-            self.price = 0.0
+            self.price = 0
             self.owner = ''
             self.phone = ''
             self.email = ''
@@ -19,6 +19,12 @@ class Product:
             self.phone = jf['Phone']
             self.email = jf['Email']
     #end def __init__
+
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
+
+
+
 
     def printInfo(self):
         #print('UID:', self.uid)
@@ -47,7 +53,7 @@ class Product:
         elif attr == 'phone':
             self.phone = value
         elif attr == 'price':
-            self.price = float(value)
+            self.price = int(value)
         else:
             self.email = value
     #end def setAttr

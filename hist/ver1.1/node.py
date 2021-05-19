@@ -51,10 +51,8 @@ class Node:
 
             if action['type'] == 'newProduct':
                 #print('Someone post a new product')
-                if action['data'] == self.myid:
-                    continue
                 newProduct = Product(action)
-                #newProduct.printInfo()
+                newProduct.printInfo()
                 if newProduct.name in self.product_lst:
                     self.product_lst[newProduct.name].append(newProduct)
                 else:
@@ -66,8 +64,6 @@ class Node:
             #end rec newProduct
 
             if action['type'] == 'remove':
-                if action['data'] == self.myid:
-                    continue
                 name = action['Name']
                 uid = action['UID']
                 # Assume the product in list
@@ -76,7 +72,7 @@ class Node:
                     for p in p_lst:
                         if p.uid == uid:
                             p_lst.remove(p)
-                            print('debug: remove signal, ack')
+                            #print('debug: remove signal, ack')
                             break
                         #end if
                     #end for
@@ -84,12 +80,9 @@ class Node:
                     pass
                     #print('debug: there is no such a product')
                 #end if
-                self.version+=1
             #end if action
 
             if action['type'] == 'update': 
-                if action['data'] == self.myid:
-                    continue
                 name = action['Name']
                 uid = action['UID']
                 attr = action['Attribute']
@@ -108,7 +101,6 @@ class Node:
                     pass
                     #print('debug: there is no such a product')
                 #end if 
-                self.version+=1
             #end if action
 
             if action['type'] == 'peers':
@@ -119,8 +111,6 @@ class Node:
                 },self.peers)
                 #   syncchronize dictionary
                 for peer in self.peers:
-                    if peer == self.myid:
-                        continue
                     dist = self.peers[peer]
                     pu.sendJS(self.udp_socket, dist, {
                         "type": "sync",
@@ -144,7 +134,7 @@ class Node:
                         p_lst = self.product_lst[pn]
                         for p in p_lst:
                             smsg = p.jsonFile()
-                            smsg.update({'type': 'newProduct', 'sync': True, 'data': self.myid})
+                            smsg.update({'type': 'newProduct', 'sync': True})
                             pu.sendJS(self.udp_socket, addr, smsg) 
                         #end for
                     #end for
@@ -153,7 +143,7 @@ class Node:
             #end rec sync
 
             if action['type'] == 'syncVersion':
-                self.version = action['version']
+                self.version == action['version']
             #end rec syncVersion
 
             if action['type'] == 'broadcast':
@@ -163,7 +153,7 @@ class Node:
                     p_lst = self.product_lst[pn]
                     for p in p_lst:
                         smsg = p.jsonFile()
-                        smsg.update({'type': 'newProduct', 'sync': True, 'data': self.myid})
+                        smsg.update({'type': 'newProduct', 'sync': True})
                         pu.broadcastJS(self.udp_socket, smsg, self.peers) 
                     #end for
                 #end for
@@ -176,7 +166,6 @@ class Node:
             #end rec reset
 
             if action['type'] == 'introduce':
-                print('%s is online now' % action['data'])
                 self.peers[action['data']]= addr
             #end rec introduce
 
@@ -189,10 +178,8 @@ class Node:
                     time.sleep(0.5) 
                     break
                     # self.udp_socket.close()
-                #end if
+                value, key = self.peers.pop(action['data'])
                 print( action['data'] + " is left.") 
-                if action['data'] != 'helper':
-                    value, key = self.peers.pop(action['data'])
             #end if
         #end while
     #end def
@@ -212,12 +199,11 @@ class Node:
             msg_input = input("$:")
             msg_input = msg_input.strip()
             if msg_input == "exit":
-                if self.myid != 'helper':
-                    self.save()
                 pu.broadcastJS(self.udp_socket, {
                     "type":"exit",
                     "data":self.myid
                 },self.peers)
+                self.save()
                 break     
 
 
@@ -230,23 +216,15 @@ class Node:
                 #newProduct = self.createProduct()
                 newProduct = Product()
                 newProduct.name = input('Your product name: ')
-                newProduct.description = input('Please descript your product status: ')
-                newProduct.price = float(input('what is the price of the product: '))
-                newProduct.phone = input('what is your phone number(enter None to skip this question): ')
-                newProduct.email = input('what is your email address: ')
+                newProduct.description = input('Please descript your product status:')
+                newProduct.price = input('what is the price of the product:')
                 newProduct.owner = self.myid
                 newProduct.uid = self.getUID()
                 newProduct.printInfo()
                 smsg = newProduct.jsonFile()
-                smsg.update({'type': 'newProduct', 'sync': False, 'data': self.myid})
-                # add to list
-                if newProduct.name in self.product_lst:
-                    self.product_lst[newProduct.name].append(newProduct)
-                else:
-                    self.product_lst[newProduct.name] =  [newProduct]
+                smsg.update({'type': 'newProduct', 'sync': False})
                 print('Product added')
                 pu.broadcastJS(self.udp_socket, smsg, self.peers)
-                self.version+=1
                 continue
 
             if msg_input == 'save':
@@ -264,7 +242,6 @@ class Node:
                     #print('debug: send a update command to peers')
                     pu.broadcastJS(self.udp_socket, {
                         "type": "update",
-                        "data": self.myid,
                         "Name": p.name,
                         "UID": p.uid,
                         "Attribute": attr,
@@ -273,7 +250,6 @@ class Node:
                     pass
                     #print('debug: update canceled, nothing happend')
                 #end if
-                self.version+=1
                 continue
 
             if msg_input == 'remove':
@@ -282,15 +258,12 @@ class Node:
                     #print('debug: send a remove command to peers')
                     pu.broadcastJS(self.udp_socket, {
                             "type": "remove",
-                            "data": self.myid,
                             "Name": p.name,
                             "UID": p.uid}, self.peers)
                 else:
                     pass
                     #print('debug: Remove canceled, nothing happened')
-                self.version += 1
                 continue
-            #end remove command 
 
             if msg_input == 'search':
                 self.search()
@@ -317,7 +290,9 @@ class Node:
                 },self.peers)
                 continue 
         #end while
-        pu.sendJS(self.udp_socket, self.seed, {'type': 'exit', 'data': self.myid})
+        if self.myid == 'helper':
+            dist = self.udp_socket.getsockname()
+            pu.sendJS(self.udp_socket, dist, {'type': 'exit', 'data': self.myid})
     #end def send
 
 
@@ -394,7 +369,6 @@ class Node:
             #         p.printInfo()
             result = 1
         if search_method == "4":
-            self.printProductInfo()
             return None
 
         if result == 0 :
@@ -494,9 +468,9 @@ class Node:
                     for p in show_lst:
                         if p.uid == uid:
                             attr_lst = ['name', 'phone', 'description', 'price', 'email']
-                            attr = input('what infomation are you going to update(name, price, phone, email, description): ')
+                            attr = input('what infomation are you going to update(name, description, price, phone, email)? ')
                             while attr not in attr_lst:
-                                attr = input('Invalid input, re-enter your input please(name, price, phone, email, description): ')
+                                attr = input('Invalid input, re-enter your input please(name, description, price, phone, email): ')
                             #end while
                             value = input(f'enter your new {attr}:')
                             p.setAttr(attr, value)
@@ -540,14 +514,12 @@ class Node:
 
     def printProductInfo(self, lst=None):
         print('List version:', self.version) 
-        #print('UID\tName\tPrice\tOwner\t\tDescription')
-        print('%-20s%-10s%-10s%-15s%-12s%-30s%-50s'%('UID', 'Name', 'Price', 'Owner', 'Phone', 'Email', 'Description'))
+        print('UID\tName\tPrice\tOwner\t\tDescription')
         if lst == None:
             for pl_key in self.product_lst:
                 p_lst = self.product_lst[pl_key]
                 for p in p_lst:
-                    #p.printInfo()
-                    print('%-20s%-10s%-10f%-15s%-12s%-30s%-50s'%(p.uid, p.name, p.price, p.owner, p.phone, p.email, p.description))
+                    p.printInfo()
                 #end for
             #end for
         else: 
