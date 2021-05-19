@@ -261,7 +261,7 @@ class Node:
             if msg_input == 'update':
                 p, attr, value = self.update()
                 if p != None:
-                    #print('debug: send a update command to peers')
+                    print('Update successfully')
                     pu.broadcastJS(self.udp_socket, {
                         "type": "update",
                         "data": self.myid,
@@ -269,11 +269,11 @@ class Node:
                         "UID": p.uid,
                         "Attribute": attr,
                         "Value": value}, self.peers)
+                    self.version+=1
                 else:
                     pass
                     #print('debug: update canceled, nothing happend')
                 #end if
-                self.version+=1
                 continue
 
             if msg_input == 'remove':
@@ -518,11 +518,12 @@ class Node:
     #end def createProduct(self):
 
     def printGuide(self):
+        print('type \'guide\' and press enter to print this guide again')
+        print('type \'friends\' and press enter to print who is online')
         print('type \'product\' and press enter to post a product')
         print('type \'remove\' and press enter to remove the product that you posted')
         print('type \'update\' and press enter to update a product that you posted')
         print('type \'search\' and press enter to start a search for a product')
-        print('type \'guide\' and press enter to print this guide again')
         print('type \'exit\' and press enter to stop this program at any time you want to leave')
 
     #end def printGuide()
@@ -552,6 +553,7 @@ class Node:
             #end for
         else: 
             for p in lst:
-                p.printInfo()
+                print('%-20s%-10s%-10f%-15s%-12s%-30s%-50s'%(p.uid, p.name, p.price, p.owner, p.phone, p.email, p.description))
+                #p.printInfo()
         #end if 
 #end class
